@@ -307,6 +307,8 @@ class RemoteKernelSpecManager(KernelSpecManager):
         self.log.debug("Request list kernel specs at: %s", self.kernelspecs_endpoint)
         response = yield fetch_kg(self.kernelspecs_endpoint, method='GET')
         kernel_specs = json_decode(response.body)
+        if self.whitelist:
+            kernel_specs['kernelspecs'] = {name: spec for name, spec in kernel_specs['kernelspecs'].items() if name in self.whitelist}
         raise gen.Return(kernel_specs)
 
     @gen.coroutine
